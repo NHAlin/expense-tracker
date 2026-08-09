@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Daily Expense Tracker</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h1 class="app-logo mb-0"> Expense Tracker</h1>
+
+                <button type="button" id="showExpenseFormButton" class="btn btn-primary">
+                    Add New Expense
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+
+    <!-- Introduction and year filter -->
+    <section class="dashboard-heading mb-4">
+        <div class="row align-items-end g-3">
+            <div class="col-md-8">
+
+                <p class="section-label mb-2">
+                    Personal Expense Tracker
+                </p>
+
+                <h2 class="display-title">
+                    See where your money goes.
+                </h2>
+
+                <p class="text-muted-custom mb-0">
+                    Record your daily expenses and understand your
+                    monthly spending.
+                </p>
+            </div>
+
+            <div class="col-md-4 col-lg-3 ms-lg-auto">
+                <label for="yearFilter" class="form-label">
+                    Viewing year
+                </label>
+
+                <select id="yearFilter" class="form-select">
+                    <option value="2026" selected>2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expense form -->
+    <section id="expenseFormSection" class="expense-form-panel mb-4" style="display: none;">
+    <div class="expense-form-heading">
+        <div>
+            <p class="section-label mb-1">
+                New Transaction
+            </p>
+
+            <h2 class="panel-title mb-0">
+                Add New Expense
+            </h2>
+        </div>
+
+        <button type="button" id="closeExpenseFormButton" class="form-close-button" aria-label="Close expense form"> &times; </button>
+    </div>
+
+    <form id="expenseForm" novalidate>
+
+        <div class="row g-3">
+
+            <!-- Title -->
+            <div class="col-12">
+                <label for="expenseTitle" class="form-label">
+                    Title
+                </label>
+
+                <input type="text" id="expenseTitle" name="expenseTitle" class="form-control" placeholder="Example: Internet bill"
+                    maxlength="100"
+                    required>
+
+                <div id="expenseTitleError" class="invalid-feedback">
+                    Please enter an expense title.
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="col-12 col-md-6">
+                <label for="expenseAmount" class="form-label">
+                    Amount
+                </label>
+
+                <div class="input-group">
+                    <span class="input-group-text">
+                        RM
+                    </span>
+
+                    <input type="number" id="expenseAmount" name="expenseAmount" class="form-control" placeholder="0.00" min="0.01" step="0.01" required>
+                    
+                    <div id="expenseAmountError"  class="invalid-feedback">
+                        Please enter an amount greater than RM0.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date -->
+            <div class="col-12 col-md-6">
+                <label for="expenseDate" class="form-label">
+                    Date
+                </label>
+
+                <input type="date" id="expenseDate" name="expenseDate" class="form-control" required>
+
+                <div id="expenseDateError" class="invalid-feedback">
+                    Please select an expense date.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Form buttons -->
+        <div class="expense-form-actions">
+            <button type="button" id="cancelExpenseButton" class="btn btn-secondary" >
+                Cancel
+            </button>
+
+            <button type="submit" id="saveExpenseButton" class="btn btn-primary">
+                Add Expense
+            </button>
+        </div>
+
+    </form>
+    </section>
+
+    <!-- Summary cards -->
+    <section id="summarySection" class="mb-4">
+        <div class="row g-3">
+
+            <!-- Total spent -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <article class="summary-card summary-card-primary">
+                    <p class="summary-label">
+                        Total Spent
+                    </p>
+
+                    <h3 id="totalExpenseAmount">
+                        RM0.00
+                    </h3>
+
+                    <p id="expenseCount" class="summary-description">
+                        0 expenses recorded
+                    </p>
+                </article>
+            </div>
+
+            <!-- Average expense -->
+            <div class="col-6 col-md-6 col-lg-4">
+                <article class="summary-card">
+                    <p class="summary-label">
+                        Average Expense
+                    </p>
+
+                    <h3 id="averageExpenseAmount">
+                        RM0.00
+                    </h3>
+
+                    <p class="summary-description">
+                        Per transaction
+                    </p>
+                </article>
+            </div>
+
+            <!-- Highest month -->
+            <div class="col-6 col-md-12 col-lg-4">
+                <article class="summary-card">
+                    <p class="summary-label">
+                        Highest Month
+                    </p>
+
+                    <h3 id="highestExpenseMonth">
+                        -
+                    </h3>
+
+                    <p id="highestMonthAmount" class="summary-description">
+                        No spending yet
+                    </p>
+                </article>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Chart and insight section -->
+    <section class="row g-4 mb-4">
+
+        <!-- Monthly chart -->
+        <div class="col-12 col-lg-8">
+            <article class="content-panel h-100">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <p class="section-label mb-1">
+                            Monthly Overview
+                        </p>
+
+                        <h2 class="panel-title">
+                            Spending Activity
+                        </h2>
+                    </div>
+
+                    <span id="chartYear" class="year-badge">
+                        2026
+                    </span>
+                </div>
+
+                <div id="monthlyChart" class="monthly-chart" aria-live="polite">
+                    <!-- Diagram will be generated by JavaScript -->
+                </div>
+            </article>
+        </div>
+
+        <!-- Insight panel -->
+        <div class="col-12 col-lg-4">
+            <article class="content-panel insight-panel h-100">
+                <span class="insight-icon">
+                    ↗
+                </span>
+
+                <div>
+                    <p class="section-label mb-2">
+                        Quick Insight
+                    </p>
+
+                    <h2 id="insightTitle" class="panel-title mb-3">
+                        Ready when you are.
+                    </h2>
+
+                    <p id="insightDescription" class="insight-description" >
+                        Add your first expense to start seeing
+                        useful monthly spending patterns.
+                    </p>
+                </div>
+            </article>
+        </div>
+
+    </section>
+
+    <!-- Expense list -->
+    <section id="expenseListSection" class="content-panel">
+
+        <div class="expense-list-heading">
+            <div>
+                <p class="section-label mb-1">
+                    Expense History
+                </p>
+
+                <h2 class="panel-title mb-0">
+                    Expenses
+
+                    <span id="expenseListCount" class="count-badge">
+                        0
+                    </span>
+                </h2>
+            </div>
+
+            <div class="expense-tools">
+                <input type="search" id="expenseSearch" class="form-control" placeholder="Search expenses" aria-label="Search expenses">                
+
+                <select id="expenseSort" class="form-select" aria-label="Sort expenses">
+                    <option value="newest">
+                        Newest
+                    </option>
+
+                    <option value="highest">
+                        Highest amount
+                    </option>
+                </select>
+
+                <button type="button" id="exportCsvButton" class="btn export-button">
+                    Export CSV
+                </button>
+            </div>
+        </div>
+
+        <div id="expenseList">
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    $
+                </div>
+
+                <h3>Found no expenses.</h3>
+
+                <p>
+                    There are no expenses recorded for the selected year.
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    </main>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <!-- Custom JavaScript -->
+    <script src="js/app.js"></script>
+
+</body>
+</html>
